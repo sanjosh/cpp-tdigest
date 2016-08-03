@@ -19,6 +19,8 @@ class TDigest {
     public:
         TDigest (double compression): _compression(compression) {}
 
+        ~TDigest() { delete _centroids ;}
+
         inline long size() const {
             return _count;
         }
