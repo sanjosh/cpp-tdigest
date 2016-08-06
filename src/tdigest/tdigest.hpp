@@ -1,7 +1,7 @@
-#ifndef HEADER_TDIGEST
-#define HEADER_TDIGEST
+#pragma once
 
 #include <cfloat>
+#include <memory>
 
 #include "avltree.hpp"
 
@@ -14,12 +14,14 @@ class TDigest {
     private:
         double    _compression     = 100;
         double    _count           = 0;
-        AvlTree*  _centroids       = new AvlTree();
+        std::unique_ptr<AvlTree>  _centroids;
 
     public:
-        TDigest (double compression): _compression(compression) {}
-
-        ~TDigest() { delete _centroids ;}
+        TDigest (double compression)
+          : _compression(compression) 
+        {
+          _centroids = std::unique_ptr<AvlTree>(new AvlTree());
+        }
 
         inline long size() const {
             return _count;
@@ -106,7 +108,7 @@ class TDigest {
         }
 
         inline AvlTree* centroids() const {
-            return _centroids;
+            return _centroids.get();
         }
 
         inline void merge(TDigest* digest) {
@@ -121,4 +123,3 @@ class TDigest {
 
 };
 
-#endif

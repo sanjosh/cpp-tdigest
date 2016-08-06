@@ -1,5 +1,4 @@
-#ifndef HEADER_AVLTREE
-#define HEADER_AVLTREE
+#pragma once
 
 #include <cassert>
 #include <cmath>
@@ -12,21 +11,24 @@ using namespace std;
 class AvlTree {
 
     private:
+
+      static constexpr size_t MAXNODE = 1000;
+
         int       _root;
         int       _n = 0;
         // TODO We should reallocate tables (ie allow dynamic arrays)
-        int       _parent[1000];
-        int       _left[1000];
-        int       _right[1000];
-        char      _depth[1000];
-        int       _count[1000];
-        double    _values[1000];
-        int       _aggregatedCount[1000];
+        int       _parent[MAXNODE];
+        int       _left[MAXNODE];
+        int       _right[MAXNODE];
+        char      _depth[MAXNODE];
+        int       _count[MAXNODE];
+        double    _values[MAXNODE];
+        int       _aggregatedCount[MAXNODE];
 
     public:
         static const int NIL = 0;
 
-        AvlTree();
+        explicit AvlTree();
 
         //
         // Node comparison
@@ -254,4 +256,3 @@ class AvlTree {
 
 };
 
-#endif
