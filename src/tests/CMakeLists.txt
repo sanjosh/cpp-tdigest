@@ -16,4 +16,14 @@ target_link_libraries (AvlTreeTest
     pthread
 )
 
-add_test(TestAvlTree AvlTreeTest)
+add_executable (TDigestTest tdigest_test.cpp)
+
+target_link_libraries (TDigestTest
+    tdigest
+    ${GTEST_BOTH_LIBRARIES}
+    pthread
+)
+
+add_test(TestAvlTree 
+  AvlTreeTest
+  TDigestTest)

@@ -60,3 +60,29 @@ double TDigest::quantile(double q) {
 
 }
 
+struct SerializedDigest
+{
+  double    compression;
+  double    count;
+};
+
+void TDigest::save(std::string& out)
+{
+  SerializedDigest d;
+  d.compression = _compression;
+  d.count = _count;
+
+  out.append((char*)&d, sizeof(d));
+
+  _centroids->save(out);
+}
+
+void TDigest::load(const std::string& in)
+{
+  SerializedDigest* d = (SerializedDigest*)in.data();
+  _compression = d->compression;
+  _count = d->count;
+
+  _centroids->load(in.substr(sizeof(*d), in.size() - sizeof(*d)));
+}
+
