@@ -121,5 +121,14 @@ class TDigest {
         void compress();
         double quantile(double q);
 
+        void save(std::string& out) {
+          // TODO also save compression and count
+          _centroids->save(out);
+        }
+
+        void load(const std::string& in) {
+          _centroids->load(in);
+        }
+
 };
 

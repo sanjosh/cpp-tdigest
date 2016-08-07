@@ -254,3 +254,71 @@ void AvlTree::rotateRight(int node) {
     updateAggregates(node);
     updateAggregates(parentNode(node));
 }
+
+
+struct SerializedTreeNode
+{
+  int parent;
+  int left;
+  int right;
+  char depth;
+  int count;
+  double values;
+  int aggregatedCount;
+};
+
+struct SerializedTree
+{
+  int root;
+  int n;
+  SerializedTreeNode nodes[0];
+};
+
+void AvlTree::save(std::string& out) {
+
+  size_t len = (sizeof(SerializedTree) + 
+      ((_n + 1) * sizeof(SerializedTreeNode)));
+  char* buf = (char*)malloc(len);
+ 
+  SerializedTree* header = (SerializedTree*)buf;
+  header->n = _n;
+  header->root = _root;
+
+  for (int idx = 0; idx <= _n; idx ++)
+  {
+    header->nodes[idx].parent = _parent[idx];
+    header->nodes[idx].left = _left[idx];
+    header->nodes[idx].right = _right[idx];
+    header->nodes[idx].depth = _depth[idx];
+    header->nodes[idx].count = _count[idx];
+    header->nodes[idx].values = _values[idx];
+    header->nodes[idx].aggregatedCount = _aggregatedCount[idx];
+  }
+
+  out.append(buf, len);
+  free(buf);
+}
+
+void AvlTree::load(const std::string& in) {
+  SerializedTree* header = (SerializedTree*)in.data();
+
+  assert(header->n > 0);
+  assert(header->n < MAXNODE);
+
+  _root = header->root;
+  _n = header->n;
+
+  SerializedTreeNode* nodes = (SerializedTreeNode*)
+    (in.data() + sizeof(SerializedTree));
+ 
+  for (int idx = 0; idx <= _n; idx ++)
+  {
+    _parent[idx] = nodes[idx].parent;
+    _left[idx] = nodes[idx].left;
+    _right[idx] = nodes[idx].right;
+    _depth[idx] = nodes[idx].depth;
+    _count[idx] = nodes[idx].count;
+    _values[idx] = nodes[idx].values;
+    _aggregatedCount[idx] = nodes[idx].aggregatedCount;
+  }
+}

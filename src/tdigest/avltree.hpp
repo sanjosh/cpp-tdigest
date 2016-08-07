@@ -254,5 +254,8 @@ class AvlTree {
             print(_root);
         }
 
+        void save(std::string& out);
+
+        void load(const std::string& in);
 };
 
