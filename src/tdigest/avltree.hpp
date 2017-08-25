@@ -17,6 +17,7 @@ class AvlTree {
 
 		typedef int32_t NodeIdx;
 		typedef double ValueType;
+		typedef int8_t Depth;
 
     private:
         NodeIdx       _root {NIL};
@@ -25,7 +26,7 @@ class AvlTree {
         std::vector<NodeIdx>       _parent;
         std::vector<NodeIdx>       _left;
         std::vector<NodeIdx>       _right;
-        std::vector<char>      _depth;
+        std::vector<Depth>      _depth;
         std::vector<int>       _count;
         std::vector<ValueType>    _values;
         std::vector<int>       _aggregatedCount;
@@ -89,7 +90,7 @@ class AvlTree {
             return _right[node];
         }
         // O(1)
-        inline int depth(NodeIdx node) const {
+        inline Depth depth(NodeIdx node) const {
             return _depth[node];
         }
         // O(1)
@@ -133,7 +134,7 @@ class AvlTree {
         // O(1)
         inline void updateAggregates(NodeIdx node) {
             // Updating depth
-            _depth[node] = 1 + max(depth(leftNode(node)), depth(rightNode(node)));
+            _depth[node] = 1 + std::max(depth(leftNode(node)), depth(rightNode(node)));
             _aggregatedCount[node] = count(node) + aggregatedCount(leftNode(node)) + aggregatedCount(rightNode(node));
         }
 

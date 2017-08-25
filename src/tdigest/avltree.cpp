@@ -291,7 +291,7 @@ bool AvlTree::checkBalance(NodeIdx node) const {
 	if(node == NIL) {
 		return depth(node) == 0;
 	} else {
-		return depth(node) == 1 + max(depth(leftNode(node)), depth(rightNode(node)))
+		return depth(node) == 1 + std::max(depth(leftNode(node)), depth(rightNode(node)))
 			&& abs(depth(leftNode(node)) - depth(rightNode(node))) <= 1
 			&& checkBalance(leftNode(node))
 			&& checkBalance(rightNode(node))
