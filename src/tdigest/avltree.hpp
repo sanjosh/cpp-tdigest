@@ -34,6 +34,11 @@ class AvlTree {
 
         explicit AvlTree();
 
+        AvlTree(const AvlTree&) = delete;
+        AvlTree(AvlTree&&) = delete;
+        void operator = (const AvlTree&) = delete;
+        void operator = (AvlTree&&) = delete;
+
         //
         // Node comparison
         //
