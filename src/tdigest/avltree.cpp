@@ -285,3 +285,76 @@ void AvlTree::rotateRight(NodeIdx node) {
     updateAggregates(node);
     updateAggregates(parentNode(node));
 }
+
+// Check balance integrity
+bool AvlTree::checkBalance(NodeIdx node) const {
+	if(node == NIL) {
+		return depth(node) == 0;
+	} else {
+		return depth(node) == 1 + max(depth(leftNode(node)), depth(rightNode(node)))
+			&& abs(depth(leftNode(node)) - depth(rightNode(node))) <= 1
+			&& checkBalance(leftNode(node))
+			&& checkBalance(rightNode(node))
+		;
+	}
+}
+
+bool AvlTree::checkBalance() const {
+	return checkBalance(_root);
+}
+
+// Check aggregates integrity
+bool AvlTree::checkAggregates(NodeIdx node) const {
+	if(node == NIL) {
+		return count(node) == 0;
+	} else {
+		return _aggregatedCount[node] == _count[node] + _aggregatedCount[leftNode(node)] + _aggregatedCount[rightNode(node)]
+			&& checkAggregates(leftNode(node))
+			&& checkAggregates(rightNode(node))
+		;
+	}
+}
+
+bool AvlTree::checkAggregates() const {
+	return checkAggregates(_root);
+}
+
+// Check integrity (order of nodes)
+bool AvlTree::checkIntegrity(NodeIdx node) const {
+	if(node == NIL) {
+		return true;
+	} else {
+		bool ok = true;
+		if(leftNode(node) != NIL) {
+			ok &= _values[node] >= _values[leftNode(node)];
+			ok &= checkIntegrity(leftNode(node));
+		}
+		if(rightNode(node) != NIL) {
+			ok &= _values[node] <= _values[rightNode(node)];
+			ok &= checkIntegrity(rightNode(node));
+		}
+		return ok;
+	}
+}
+
+bool AvlTree::checkIntegrity() const {
+	return checkIntegrity(_root);
+}
+
+// Print as rows
+void AvlTree::print(NodeIdx node) const {
+	if(node == NIL)
+		return;
+	cout << "Node " << node << "=> ";
+	cout << "Value:" << _values[node] << " ";
+	cout << "(" << _values[leftNode(node)] << ";";
+	cout << "" << _values[rightNode(node)] << ") ";
+	cout << "Depth: " << depth(node) << " ";
+	cout << "Count: " <<_count[node] << " ";
+	cout << "Aggregate: " << _aggregatedCount[node] << endl;
+	print(leftNode(node));
+	print(rightNode(node));
+}
+void AvlTree::print() const {
+	print(_root);
+}

@@ -192,74 +192,24 @@ class AvlTree {
         //
 
         // Check balance integrity
-        bool checkBalance(NodeIdx node) const {
-            if(node == NIL) {
-                return depth(node) == 0;
-            } else {
-                return depth(node) == 1 + max(depth(leftNode(node)), depth(rightNode(node)))
-                    && abs(depth(leftNode(node)) - depth(rightNode(node))) <= 1
-                    && checkBalance(leftNode(node))
-                    && checkBalance(rightNode(node))
-                ;
-            }
-        }
-        inline bool checkBalance() const {
-            return checkBalance(_root);
-        }
+        bool checkBalance(NodeIdx node) const;
+
+        bool checkBalance() const;
 
         // Check aggregates integrity
-        bool checkAggregates(NodeIdx node) const {
-            if(node == NIL) {
-                return count(node) == 0;
-            } else {
-                return _aggregatedCount[node] == _count[node] + _aggregatedCount[leftNode(node)] + _aggregatedCount[rightNode(node)]
-                    && checkAggregates(leftNode(node))
-                    && checkAggregates(rightNode(node))
-                ;
-            }
-        }
-        inline bool checkAggregates() const {
-            return checkAggregates(_root);
-        }
+        bool checkAggregates(NodeIdx node) const;
+
+        bool checkAggregates() const;
 
         // Check integrity (order of nodes)
-        bool checkIntegrity(NodeIdx node) const {
-            if(node == NIL) {
-                return true;
-            } else {
-                bool ok = true;
-                if(leftNode(node) != NIL) {
-                    ok &= _values[node] >= _values[leftNode(node)];
-                    ok &= checkIntegrity(leftNode(node));
-                }
-                if(rightNode(node) != NIL) {
-                    ok &= _values[node] <= _values[rightNode(node)];
-                    ok &= checkIntegrity(rightNode(node));
-                }
-                return ok;
-            }
-        }
-        inline bool checkIntegrity() const {
-            return checkIntegrity(_root);
-        }
+        bool checkIntegrity(NodeIdx node) const;
+
+        bool checkIntegrity() const;
 
         // Print as rows
-        void print(NodeIdx node) const {
-            if(node == NIL)
-                return;
-            cout << "Node " << node << "=> ";
-            cout << "Value:" << _values[node] << " ";
-            cout << "(" << _values[leftNode(node)] << ";";
-            cout << "" << _values[rightNode(node)] << ") ";
-            cout << "Depth: " << depth(node) << " ";
-            cout << "Count: " <<_count[node] << " ";
-            cout << "Aggregate: " << _aggregatedCount[node] << endl;
-            print(leftNode(node));
-            print(rightNode(node));
-        }
-        void print() const {
-            print(_root);
-        }
+        void print(NodeIdx node) const;
+
+        void print() const;
 
 };
 
