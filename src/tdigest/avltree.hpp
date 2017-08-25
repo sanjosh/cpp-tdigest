@@ -4,6 +4,7 @@
 #include <cassert>
 #include <cmath>
 #include <iostream>
+#include <vector>
 
 
 using namespace std;
@@ -11,22 +12,24 @@ using namespace std;
 
 class AvlTree {
 
-    private:
-        int       _root;
-        int       _n = 0;
-        // TODO We should reallocate tables (ie allow dynamic arrays)
-        int       _parent[1000];
-        int       _left[1000];
-        int       _right[1000];
-        char      _depth[1000];
-        int       _count[1000];
-        double    _values[1000];
-        int       _aggregatedCount[1000];
-
-    public:
+	public:
         static const int NIL = 0;
 
-        AvlTree();
+    private:
+        int       _root {NIL};
+        int       _n = 0;
+        // TODO We should reallocate tables (ie allow dynamic arrays)
+        std::vector<int>       _parent;
+        std::vector<int>       _left;
+        std::vector<int>       _right;
+        std::vector<char>      _depth;
+        std::vector<int>       _count;
+        std::vector<double>    _values;
+        std::vector<int>       _aggregatedCount;
+
+    public:
+
+        explicit AvlTree();
 
         //
         // Node comparison
@@ -176,6 +179,10 @@ class AvlTree {
         // O(log(n))
         // TODO to factor with rotateLeft
         void rotateRight(int node);
+
+		int ExpandNodes();
+
+		int CopyNode(int node, double val, int count, int parent);
 
     public:
         // 

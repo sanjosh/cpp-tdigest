@@ -4,6 +4,10 @@ add_library (tdigest
     tdigest.cpp
 )
 
+target_link_libraries(tdigest
+    glog
+)
+
 list(APPEND CMAKE_CXX_FLAGS "-std=c++11 -O0 -g -fprofile-arcs -ftest-coverage -DNDEBUG ${CMAKE_CXX_FLAGS}")
 list(APPEND CMAKE_C_FLAGS " -O0 -g -fprofile-arcs -ftest-coverage -DNDEBUG ${CMAKE_C_FLAGS}")
 list(APPEND CMAKE_EXE_LINKER_FLAGS "-O0 -g -fprofile-arcs -ftest-coverage -DNDEBUG ${CMAKE_EXE_LINKER_FLAGS}")

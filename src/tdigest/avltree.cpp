@@ -1,7 +1,12 @@
 #include "avltree.hpp"
+#include <glog/logging.h>
 
+static constexpr size_t kNumNodes = 10;
 
-AvlTree::AvlTree(): _root(NIL) {
+AvlTree::AvlTree() {
+	
+	ExpandNodes();
+	
     _depth[NIL]     = 0;
     _parent[NIL]    = 0;
     _left[NIL]      = 0;
@@ -62,6 +67,28 @@ int AvlTree::prevNode(int node) const {
     }
 }
 
+int AvlTree::ExpandNodes() {
+	const size_t new_size = _parent.size() + kNumNodes;
+	LOG(INFO) << "resized tree from " << _parent.size() << " by " << new_size;
+	_parent.resize(new_size);
+	_left.resize(new_size);
+	_right.resize(new_size);
+	_depth.resize(new_size);
+	_count.resize(new_size);
+	_values.resize(new_size);
+	_aggregatedCount.resize(new_size);
+	return 0;
+}
+
+int AvlTree::CopyNode(int node, double val, int count, int parent) {
+	_values[node] = val;
+	_count[node] = count;
+	_left[node] = NIL;
+	_right[node] = NIL;
+	_parent[node] = parent;
+	return 0;
+}
+
 bool AvlTree::add(double x, int w) {
     if(_root == NIL) {
         _root = ++_n;
@@ -92,11 +119,10 @@ bool AvlTree::add(double x, int w) {
         } while(node != NIL);
 
         node = ++_n;
-        _values[node] = x;
-        _count[node] = w;
-        _left[node] = NIL;
-        _right[node] = NIL;
-        _parent[node] = parent;
+		if (node >= _values.size()) {
+			ExpandNodes();
+		}
+		CopyNode(node, x, w, parent);
         if(cmp < 0) {
             _left[parent] = node;
         } else {
