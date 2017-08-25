@@ -98,11 +98,11 @@ class AvlTree {
             return _count[node];
         }
         // O(1)
-        inline int aggregatedCount(int node) const {
+        inline int aggregatedCount(NodeIdx node) const {
             return _aggregatedCount[node];
         }
         // O(1)
-        inline ValueType value(int node) const {
+        inline ValueType value(NodeIdx node) const {
             return _values[node];
         }
 
@@ -143,7 +143,7 @@ class AvlTree {
             _values[node] += cnt * (val - value(node)) / count(node);
             _count[node] += cnt;
             
-            for(int n = node; n != NIL; n = parentNode(n)) {
+            for(NodeIdx n = node; n != NIL; n = parentNode(n)) {
                updateAggregates(n);
             }
         }
@@ -153,7 +153,7 @@ class AvlTree {
             assert(value(node) == val);
             _count[node] += count;
             
-            for(int n = node; n != NIL; n = parentNode(n)) {
+            for(NodeIdx n = node; n != NIL; n = parentNode(n)) {
                updateAggregates(n);
             }
         }
@@ -162,20 +162,20 @@ class AvlTree {
         bool add(ValueType value, int count);
 
         // O(log(n))
-        int find(ValueType value) const;
+        NodeIdx find(ValueType value) const;
         
         // O(log(n))
-        int floor(ValueType value) const;
+        NodeIdx floor(ValueType value) const;
 
         // O(log(n))
-        int floorSum(long sum) const;
+        NodeIdx floorSum(long sum) const;
 
         // O(log(n))
         long ceilSum(NodeIdx node) const;
 
     private:
         // O(1)
-        inline int balanceFactor(NodeIdx node) const {
+        inline Depth balanceFactor(NodeIdx node) const {
             return depth(leftNode(node)) - depth(rightNode(node));
         }
 
