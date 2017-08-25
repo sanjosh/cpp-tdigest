@@ -16,6 +16,7 @@ class AvlTree {
         static const int NIL = 0;
 
 		typedef int32_t NodeIdx;
+		typedef double ValueType;
 
     private:
         NodeIdx       _root {NIL};
@@ -26,7 +27,7 @@ class AvlTree {
         std::vector<NodeIdx>       _right;
         std::vector<char>      _depth;
         std::vector<int>       _count;
-        std::vector<double>    _values;
+        std::vector<ValueType>    _values;
         std::vector<int>       _aggregatedCount;
 
     public:
@@ -38,10 +39,10 @@ class AvlTree {
         //
 
         // O(1)
-        inline int compare(NodeIdx node, double x) const {
-            if(value(node) < x) {
+        inline int compare(NodeIdx node, ValueType val) const {
+            if(value(node) < val) {
                 return 1;
-            } else if(value(node) == x) {
+            } else if(value(node) == val) {
                 return 0;
             } else {
                 return -1;
@@ -95,7 +96,7 @@ class AvlTree {
             return _aggregatedCount[node];
         }
         // O(1)
-        inline double value(int node) const {
+        inline ValueType value(int node) const {
             return _values[node];
         }
 
@@ -132,9 +133,9 @@ class AvlTree {
         }
 
         // O(log(n))
-        void update(NodeIdx node, double x, int w) {
-            _values[node] += w * (x - value(node)) / count(node);
-            _count[node] += w;
+        void update(NodeIdx node, ValueType val, int cnt) {
+            _values[node] += cnt * (val - value(node)) / count(node);
+            _count[node] += cnt;
             
             for(int n = node; n != NIL; n = parentNode(n)) {
                updateAggregates(n);
@@ -142,9 +143,9 @@ class AvlTree {
         }
 
         // O(log(n))
-        void merge(NodeIdx node, double x, int w) {
-            assert(value(node) == x);
-            _count[node] += w;
+        void merge(NodeIdx node, ValueType val, int count) {
+            assert(value(node) == val);
+            _count[node] += count;
             
             for(int n = node; n != NIL; n = parentNode(n)) {
                updateAggregates(n);
@@ -152,13 +153,13 @@ class AvlTree {
         }
 
         // O(log(n)) 
-        bool add(double x, int w);
+        bool add(ValueType value, int count);
 
         // O(log(n))
-        int find(double x) const;
+        int find(ValueType value) const;
         
         // O(log(n))
-        int floor(double x) const;
+        int floor(ValueType value) const;
 
         // O(log(n))
         int floorSum(long sum) const;
@@ -184,7 +185,7 @@ class AvlTree {
 
 		int ExpandNodes();
 
-		int CopyNode(NodeIdx node, double val, int count, NodeIdx parent);
+		int CopyNode(NodeIdx node, ValueType val, int count, NodeIdx parent);
 
     public:
         // 

@@ -82,23 +82,23 @@ AvlTree::NodeIdx AvlTree::ExpandNodes() {
 
 AvlTree::NodeIdx 
 AvlTree::CopyNode(NodeIdx node, 
-		double val, 
-		int count, 
+		ValueType val, 
+		int cnt, 
 		NodeIdx parent) {
 
 	_values[node] = val;
-	_count[node] = count;
+	_count[node] = cnt;
 	_left[node] = NIL;
 	_right[node] = NIL;
 	_parent[node] = parent;
 	return 0;
 }
 
-bool AvlTree::add(double value, int count) {
+bool AvlTree::add(ValueType val, int cnt) {
     if(_root == NIL) {
         _root = ++_nextNodeIdx;
-        _values[_root] = value;
-        _count[_root] = count;
+        _values[_root] = val;
+        _count[_root] = cnt;
         _left[_root] = NIL;
         _right[_root] = NIL;
         _parent[_root] = NIL;
@@ -109,7 +109,7 @@ bool AvlTree::add(double value, int count) {
         NodeIdx parent = NIL;
         int cmp;
         do {
-            cmp = compare(node, value);
+            cmp = compare(node, val);
             if(cmp < 0) {
                 parent = node;
                 node = leftNode(node);
@@ -118,7 +118,7 @@ bool AvlTree::add(double value, int count) {
                 node = rightNode(node);
             } else {
                 // we merge the node
-                merge(node, value, count);
+                merge(node, val, cnt);
                 return false;
             }
         } while(node != NIL);
@@ -127,7 +127,7 @@ bool AvlTree::add(double value, int count) {
 		if (node >= _values.size()) {
 			ExpandNodes();
 		}
-		CopyNode(node, value, count, parent);
+		CopyNode(node, val, cnt, parent);
         if(cmp < 0) {
             _left[parent] = node;
         } else {
@@ -141,9 +141,9 @@ bool AvlTree::add(double value, int count) {
     }
 }
 
-AvlTree::NodeIdx AvlTree::find(double value) const {
+AvlTree::NodeIdx AvlTree::find(ValueType val) const {
     for(NodeIdx node = _root; node != NIL;) {
-        const int cmp = compare(node, value);
+        const int cmp = compare(node, val);
         if(cmp < 0) {
             node = leftNode(node);
         } else if(cmp > 0) {
@@ -156,10 +156,10 @@ AvlTree::NodeIdx AvlTree::find(double value) const {
 }
 
 
-AvlTree::NodeIdx AvlTree::floor(double value) const {
+AvlTree::NodeIdx AvlTree::floor(ValueType val) const {
     NodeIdx f = NIL;
     for(NodeIdx node = _root; node != NIL; ) {
-        const int cmp = compare(node, value);
+        const int cmp = compare(node, val);
         if(cmp <= 0) {
             node = leftNode(node);
         } else {
