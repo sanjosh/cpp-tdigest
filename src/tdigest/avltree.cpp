@@ -42,8 +42,10 @@ AvlTree::NodeIdx AvlTree::last(NodeIdx node) const {
 AvlTree::NodeIdx AvlTree::nextNode(NodeIdx node) const {
     const NodeIdx right = rightNode(node);
     if(right != NIL) {
+		// walk down to leftmost child of right subtree 
         return first(right);
     } else {
+		// walk up to rightmost ancestor of node
         NodeIdx parent = parentNode(node);
         while(parent != NIL && node == rightNode(parent)) {
             node = parent;
@@ -56,8 +58,10 @@ AvlTree::NodeIdx AvlTree::nextNode(NodeIdx node) const {
 AvlTree::NodeIdx AvlTree::prevNode(NodeIdx node) const {
     const NodeIdx left = leftNode(node);
     if(left != NIL) {
+		// walk down to rightmost child of left subtree 
         return last(left);
     } else {
+		// walk up to leftmost ancestor of node
         NodeIdx parent = parentNode(node);
         while(parent != NIL && node == leftNode(parent)) {
             node = parent;
@@ -83,7 +87,7 @@ AvlTree::NodeIdx AvlTree::ExpandNodes() {
 AvlTree::NodeIdx 
 AvlTree::CopyNode(NodeIdx node, 
 		ValueType val, 
-		int cnt, 
+		Count cnt, 
 		NodeIdx parent) {
 
 	_values[node] = val;
@@ -94,16 +98,13 @@ AvlTree::CopyNode(NodeIdx node,
 	return 0;
 }
 
-bool AvlTree::add(ValueType val, int cnt) {
+bool AvlTree::add(ValueType val, Count cnt) {
     if(_root == NIL) {
         _root = ++_nextNodeIdx;
-        _values[_root] = val;
-        _count[_root] = cnt;
-        _left[_root] = NIL;
-        _right[_root] = NIL;
-        _parent[_root] = NIL;
+		CopyNode(_root, val, cnt, NIL);
         // Update depth and aggregates
         updateAggregates(_root);
+		return true;
     } else {
         NodeIdx node = _root;
         NodeIdx parent = NIL;
@@ -170,11 +171,11 @@ AvlTree::NodeIdx AvlTree::floor(ValueType val) const {
     return f;
 }
 
-AvlTree::NodeIdx AvlTree::floorSum(long sum) const {
+AvlTree::NodeIdx AvlTree::floorSum(Count sum) const {
     NodeIdx f = NIL;
     for(NodeIdx node = _root; node != NIL; ) {
         const NodeIdx left = leftNode(node);
-        const long leftCount = aggregatedCount(left);
+        const Count leftCount = aggregatedCount(left);
         if(leftCount <= sum) {
             f = node;
             sum -= leftCount + count(node);
@@ -186,9 +187,9 @@ AvlTree::NodeIdx AvlTree::floorSum(long sum) const {
     return f;
 }
 
-long AvlTree::ceilSum(NodeIdx node) const {
+AvlTree::Count AvlTree::ceilSum(NodeIdx node) const {
     const NodeIdx left = leftNode(node);
-    long sum = aggregatedCount(left);
+    Count sum = aggregatedCount(left);
     NodeIdx n = node;
     for(NodeIdx p = parentNode(node); p != NIL; p = parentNode(n)) {
         if(n == rightNode(p)) {

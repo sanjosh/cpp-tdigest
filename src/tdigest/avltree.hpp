@@ -18,6 +18,7 @@ class AvlTree {
 		typedef int32_t NodeIdx;
 		typedef double ValueType;
 		typedef int8_t Depth;
+		typedef int32_t Count;
 
     private:
         NodeIdx       _root {NIL};
@@ -27,9 +28,9 @@ class AvlTree {
         std::vector<NodeIdx>       _left;
         std::vector<NodeIdx>       _right;
         std::vector<Depth>      _depth;
-        std::vector<int>       _count;
+        std::vector<Count>       _count;
         std::vector<ValueType>    _values;
-        std::vector<int>       _aggregatedCount;
+        std::vector<Count>       _aggregatedCount;
 
     public:
 
@@ -139,7 +140,7 @@ class AvlTree {
         }
 
         // O(log(n))
-        void update(NodeIdx node, ValueType val, int cnt) {
+        void update(NodeIdx node, ValueType val, Count cnt) {
             _values[node] += cnt * (val - value(node)) / count(node);
             _count[node] += cnt;
             
@@ -149,9 +150,9 @@ class AvlTree {
         }
 
         // O(log(n))
-        void merge(NodeIdx node, ValueType val, int count) {
+        void merge(NodeIdx node, ValueType val, Count cnt) {
             assert(value(node) == val);
-            _count[node] += count;
+            _count[node] += cnt;
             
             for(NodeIdx n = node; n != NIL; n = parentNode(n)) {
                updateAggregates(n);
@@ -159,7 +160,7 @@ class AvlTree {
         }
 
         // O(log(n)) 
-        bool add(ValueType value, int count);
+        bool add(ValueType value, Count cnt);
 
         // O(log(n))
         NodeIdx find(ValueType value) const;
@@ -168,10 +169,10 @@ class AvlTree {
         NodeIdx floor(ValueType value) const;
 
         // O(log(n))
-        NodeIdx floorSum(long sum) const;
+        NodeIdx floorSum(Count sum) const;
 
         // O(log(n))
-        long ceilSum(NodeIdx node) const;
+        Count ceilSum(NodeIdx node) const;
 
     private:
         // O(1)
@@ -191,7 +192,7 @@ class AvlTree {
 
 		int ExpandNodes();
 
-		int CopyNode(NodeIdx node, ValueType val, int count, NodeIdx parent);
+		int CopyNode(NodeIdx node, ValueType val, Count cnt, NodeIdx parent);
 
     public:
         // 
