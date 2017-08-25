@@ -13,13 +13,13 @@ AvlTree::AvlTree() {
     _right[NIL]     = 0;
 }
 
-int AvlTree::first(int node) const {
+AvlTree::NodeIdx AvlTree::first(NodeIdx node) const {
     if(node == NIL) {
         return NIL;
     }
 
     while(true) {
-        const int left = leftNode(node);
+        const NodeIdx left = leftNode(node);
         if(left == NIL) {
             break;
         }
@@ -28,9 +28,9 @@ int AvlTree::first(int node) const {
     return node;
 }
 
-int AvlTree::last(int node) const {
+AvlTree::NodeIdx AvlTree::last(NodeIdx node) const {
     while(true) {
-        const int right = rightNode(node);
+        const NodeIdx right = rightNode(node);
         if(right == NIL) {
             break;
         }
@@ -39,12 +39,12 @@ int AvlTree::last(int node) const {
     return node;
 }
 
-int AvlTree::nextNode(int node) const {
-    const int right = rightNode(node);
+AvlTree::NodeIdx AvlTree::nextNode(NodeIdx node) const {
+    const NodeIdx right = rightNode(node);
     if(right != NIL) {
         return first(right);
     } else {
-        int parent = parentNode(node);
+        NodeIdx parent = parentNode(node);
         while(parent != NIL && node == rightNode(parent)) {
             node = parent;
             parent = parentNode(parent);
@@ -53,12 +53,12 @@ int AvlTree::nextNode(int node) const {
     }
 }
 
-int AvlTree::prevNode(int node) const {
-    const int left = leftNode(node);
+AvlTree::NodeIdx AvlTree::prevNode(NodeIdx node) const {
+    const NodeIdx left = leftNode(node);
     if(left != NIL) {
         return last(left);
     } else {
-        int parent = parentNode(node);
+        NodeIdx parent = parentNode(node);
         while(parent != NIL && node == leftNode(parent)) {
             node = parent;
             parent = parentNode(parent);
@@ -67,9 +67,9 @@ int AvlTree::prevNode(int node) const {
     }
 }
 
-int AvlTree::ExpandNodes() {
+AvlTree::NodeIdx AvlTree::ExpandNodes() {
 	const size_t new_size = _parent.size() + kNumNodes;
-	LOG(INFO) << "resized tree from " << _parent.size() << " by " << new_size;
+	LOG(INFO) << "resized tree from " << _parent.size() << " to " << new_size;
 	_parent.resize(new_size);
 	_left.resize(new_size);
 	_right.resize(new_size);
@@ -80,7 +80,12 @@ int AvlTree::ExpandNodes() {
 	return 0;
 }
 
-int AvlTree::CopyNode(int node, double val, int count, int parent) {
+AvlTree::NodeIdx 
+AvlTree::CopyNode(NodeIdx node, 
+		double val, 
+		int count, 
+		NodeIdx parent) {
+
 	_values[node] = val;
 	_count[node] = count;
 	_left[node] = NIL;
@@ -89,22 +94,22 @@ int AvlTree::CopyNode(int node, double val, int count, int parent) {
 	return 0;
 }
 
-bool AvlTree::add(double x, int w) {
+bool AvlTree::add(double value, int count) {
     if(_root == NIL) {
-        _root = ++_n;
-        _values[_root] = x;
-        _count[_root] = w;
+        _root = ++_nextNodeIdx;
+        _values[_root] = value;
+        _count[_root] = count;
         _left[_root] = NIL;
         _right[_root] = NIL;
         _parent[_root] = NIL;
         // Update depth and aggregates
         updateAggregates(_root);
     } else {
-        int node = _root;
-        int parent = NIL;
+        NodeIdx node = _root;
+        NodeIdx parent = NIL;
         int cmp;
         do {
-            cmp = compare(node, x);
+            cmp = compare(node, value);
             if(cmp < 0) {
                 parent = node;
                 node = leftNode(node);
@@ -113,16 +118,16 @@ bool AvlTree::add(double x, int w) {
                 node = rightNode(node);
             } else {
                 // we merge the node
-                merge(node, x, w);
+                merge(node, value, count);
                 return false;
             }
         } while(node != NIL);
 
-        node = ++_n;
+        node = ++ _nextNodeIdx;
 		if (node >= _values.size()) {
 			ExpandNodes();
 		}
-		CopyNode(node, x, w, parent);
+		CopyNode(node, value, count, parent);
         if(cmp < 0) {
             _left[parent] = node;
         } else {
@@ -136,9 +141,9 @@ bool AvlTree::add(double x, int w) {
     }
 }
 
-int AvlTree::find(double x) const {
-    for(int node = _root; node != NIL;) {
-        const int cmp = compare(node, x);
+AvlTree::NodeIdx AvlTree::find(double value) const {
+    for(NodeIdx node = _root; node != NIL;) {
+        const int cmp = compare(node, value);
         if(cmp < 0) {
             node = leftNode(node);
         } else if(cmp > 0) {
@@ -151,10 +156,10 @@ int AvlTree::find(double x) const {
 }
 
 
-int AvlTree::floor(double x) const {
-    int f = NIL;
-    for(int node = _root; node != NIL; ) {
-        const int cmp = compare(node, x);
+AvlTree::NodeIdx AvlTree::floor(double value) const {
+    NodeIdx f = NIL;
+    for(NodeIdx node = _root; node != NIL; ) {
+        const int cmp = compare(node, value);
         if(cmp <= 0) {
             node = leftNode(node);
         } else {
@@ -165,10 +170,10 @@ int AvlTree::floor(double x) const {
     return f;
 }
 
-int AvlTree::floorSum(long sum) const {
-    int f = NIL;
-    for(int node = _root; node != NIL; ) {
-        const int left = leftNode(node);
+AvlTree::NodeIdx AvlTree::floorSum(long sum) const {
+    NodeIdx f = NIL;
+    for(NodeIdx node = _root; node != NIL; ) {
+        const NodeIdx left = leftNode(node);
         const long leftCount = aggregatedCount(left);
         if(leftCount <= sum) {
             f = node;
@@ -181,13 +186,13 @@ int AvlTree::floorSum(long sum) const {
     return f;
 }
 
-long AvlTree::ceilSum(int node) const {
-    const int left = leftNode(node);
+long AvlTree::ceilSum(NodeIdx node) const {
+    const NodeIdx left = leftNode(node);
     long sum = aggregatedCount(left);
-    int n = node;
-    for(int p = parentNode(node); p != NIL; p = parentNode(n)) {
+    NodeIdx n = node;
+    for(NodeIdx p = parentNode(node); p != NIL; p = parentNode(n)) {
         if(n == rightNode(p)) {
-            const int leftP = leftNode(p);
+            const NodeIdx leftP = leftNode(p);
             sum += count(p) + aggregatedCount(leftP);
         }
         n = p;
@@ -195,15 +200,15 @@ long AvlTree::ceilSum(int node) const {
     return sum;
 }
 
-void AvlTree::rebalance(int node) {
-    for(int n = node; n != NIL; ) {
-        const int p = parentNode(n);
+void AvlTree::rebalance(NodeIdx node) {
+    for(NodeIdx n = node; n != NIL; ) {
+        const NodeIdx p = parentNode(n);
 
         updateAggregates(n);
 
         switch(balanceFactor(n)) {
             case -2: {
-                         const int right = rightNode(n);
+                         const NodeIdx right = rightNode(n);
                          if(balanceFactor(right) == 1) {
                              rotateRight(right);
                          }
@@ -211,7 +216,7 @@ void AvlTree::rebalance(int node) {
                          break;
                      }
             case 2: {
-                        const int left = leftNode(n);
+                        const NodeIdx left = leftNode(n);
                         if(balanceFactor(left) == -1) {
                             rotateLeft(left);
                         }
@@ -231,16 +236,16 @@ void AvlTree::rebalance(int node) {
     }
 }
 
-void AvlTree::rotateLeft(int node) {
-    const int r  = rightNode(node);
-    const int lr = leftNode(r);
+void AvlTree::rotateLeft(NodeIdx node) {
+    const NodeIdx r  = rightNode(node);
+    const NodeIdx lr = leftNode(r);
 
     _right[node] = lr;
     if(lr != NIL) {
         _parent[lr] = node;
     }
 
-    const int p = parentNode(node);
+    const NodeIdx p = parentNode(node);
     _parent[r] = p;
     if(p == NIL) {
         _root = r;
@@ -256,16 +261,16 @@ void AvlTree::rotateLeft(int node) {
     updateAggregates(parentNode(node));
 }
 
-void AvlTree::rotateRight(int node) {
-    const int l = leftNode(node);
-    const int rl = rightNode(l);
+void AvlTree::rotateRight(NodeIdx node) {
+    const NodeIdx l = leftNode(node);
+    const NodeIdx rl = rightNode(l);
 
     _left[node] = rl;
     if(rl != NIL) {
         _parent[rl] = node;
     }
 
-    const int p = parentNode(node);
+    const NodeIdx p = parentNode(node);
     _parent[l] = p;
     if(p == NIL) {
         _root = l;
