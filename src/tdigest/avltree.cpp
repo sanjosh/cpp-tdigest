@@ -326,11 +326,11 @@ bool AvlTree::checkIntegrity(NodeIdx node) const {
 		return true;
 	} else {
 		bool ok = true;
-		if(leftNode(node) != NIL) {
+		if (leftNode(node) != NIL) {
 			ok &= _values[node] >= _values[leftNode(node)];
 			ok &= checkIntegrity(leftNode(node));
 		}
-		if(rightNode(node) != NIL) {
+		if (rightNode(node) != NIL) {
 			ok &= _values[node] <= _values[rightNode(node)];
 			ok &= checkIntegrity(rightNode(node));
 		}
