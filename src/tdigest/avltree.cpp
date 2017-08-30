@@ -85,10 +85,10 @@ AvlTree::NodeIdx AvlTree::ExpandNodes() {
 }
 
 AvlTree::NodeIdx 
-AvlTree::CopyNode(NodeIdx node, 
-		ValueType val, 
-		Count cnt, 
-		NodeIdx parent) {
+AvlTree::CopyNode(const NodeIdx node, 
+		const ValueType val, 
+		const Count cnt, 
+		const NodeIdx parent) {
 
 	_values[node] = val;
 	_count[node] = cnt;
@@ -98,7 +98,7 @@ AvlTree::CopyNode(NodeIdx node,
 	return 0;
 }
 
-bool AvlTree::add(ValueType val, Count cnt) {
+bool AvlTree::add(const ValueType val, const Count cnt) {
     if(_root == NIL) {
         _root = ++_nextNodeIdx;
 		CopyNode(_root, val, cnt, NIL);
@@ -142,7 +142,7 @@ bool AvlTree::add(ValueType val, Count cnt) {
     }
 }
 
-AvlTree::NodeIdx AvlTree::find(ValueType val) const {
+AvlTree::NodeIdx AvlTree::find(const ValueType val) const {
     for(NodeIdx node = _root; node != NIL;) {
         const int cmp = compare(node, val);
         if(cmp < 0) {
@@ -157,7 +157,7 @@ AvlTree::NodeIdx AvlTree::find(ValueType val) const {
 }
 
 
-AvlTree::NodeIdx AvlTree::floor(ValueType val) const {
+AvlTree::NodeIdx AvlTree::floor(const ValueType val) const {
     NodeIdx f = NIL;
     for(NodeIdx node = _root; node != NIL; ) {
         const int cmp = compare(node, val);
@@ -187,7 +187,7 @@ AvlTree::NodeIdx AvlTree::floorSum(Count sum) const {
     return f;
 }
 
-AvlTree::Count AvlTree::ceilSum(NodeIdx node) const {
+AvlTree::Count AvlTree::ceilSum(const NodeIdx node) const {
     const NodeIdx left = leftNode(node);
     Count sum = aggregatedCount(left);
     NodeIdx n = node;
@@ -201,7 +201,7 @@ AvlTree::Count AvlTree::ceilSum(NodeIdx node) const {
     return sum;
 }
 
-void AvlTree::rebalance(NodeIdx node) {
+void AvlTree::rebalance(const NodeIdx node) {
     for(NodeIdx n = node; n != NIL; ) {
         const NodeIdx p = parentNode(n);
 
@@ -237,7 +237,7 @@ void AvlTree::rebalance(NodeIdx node) {
     }
 }
 
-void AvlTree::rotateLeft(NodeIdx node) {
+void AvlTree::rotateLeft(const NodeIdx node) {
     const NodeIdx r  = rightNode(node);
     const NodeIdx lr = leftNode(r);
 
@@ -262,7 +262,7 @@ void AvlTree::rotateLeft(NodeIdx node) {
     updateAggregates(parentNode(node));
 }
 
-void AvlTree::rotateRight(NodeIdx node) {
+void AvlTree::rotateRight(const NodeIdx node) {
     const NodeIdx l = leftNode(node);
     const NodeIdx rl = rightNode(l);
 
@@ -288,7 +288,7 @@ void AvlTree::rotateRight(NodeIdx node) {
 }
 
 // Check balance integrity
-bool AvlTree::checkBalance(NodeIdx node) const {
+bool AvlTree::checkBalance(const NodeIdx node) const {
 	if(node == NIL) {
 		return depth(node) == 0;
 	} else {
@@ -305,7 +305,7 @@ bool AvlTree::checkBalance() const {
 }
 
 // Check aggregates integrity
-bool AvlTree::checkAggregates(NodeIdx node) const {
+bool AvlTree::checkAggregates(const NodeIdx node) const {
 	if(node == NIL) {
 		return count(node) == 0;
 	} else {
@@ -321,7 +321,7 @@ bool AvlTree::checkAggregates() const {
 }
 
 // Check integrity (order of nodes)
-bool AvlTree::checkIntegrity(NodeIdx node) const {
+bool AvlTree::checkIntegrity(const NodeIdx node) const {
 	if(node == NIL) {
 		return true;
 	} else {
@@ -343,7 +343,7 @@ bool AvlTree::checkIntegrity() const {
 }
 
 // Print as rows
-void AvlTree::print(NodeIdx node) const {
+void AvlTree::print(const NodeIdx node) const {
 	if(node == NIL)
 		return;
 	cout << "Node " << node << "=> ";

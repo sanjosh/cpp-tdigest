@@ -46,7 +46,7 @@ class AvlTree {
         //
 
         // O(1)
-        inline int compare(NodeIdx node, ValueType val) const {
+        inline int compare(const NodeIdx node, const ValueType val) const {
             if(value(node) < val) {
                 return 1;
             } else if(value(node) == val) {
@@ -57,7 +57,7 @@ class AvlTree {
         }
     
         // O(1)
-        inline int compare(NodeIdx nodeA, NodeIdx nodeB) const {
+        inline int compare(const NodeIdx nodeA, const NodeIdx nodeB) const {
             return compare(nodeA, value(nodeB));
         }
 
@@ -79,31 +79,31 @@ class AvlTree {
         //
 
         // O(1)
-        inline NodeIdx parentNode(NodeIdx node) const {
+        inline NodeIdx parentNode(const NodeIdx node) const {
             return _parent[node];
         }
         // O(1)
-        inline NodeIdx leftNode(NodeIdx node) const {
+        inline NodeIdx leftNode(const NodeIdx node) const {
             return _left[node];
         }
         // O(1)
-        inline NodeIdx rightNode(NodeIdx node) const {
+        inline NodeIdx rightNode(const NodeIdx node) const {
             return _right[node];
         }
         // O(1)
-        inline Depth depth(NodeIdx node) const {
+        inline Depth depth(const NodeIdx node) const {
             return _depth[node];
         }
         // O(1)
-        inline int count(NodeIdx node) const {
+        inline int count(const NodeIdx node) const {
             return _count[node];
         }
         // O(1)
-        inline int aggregatedCount(NodeIdx node) const {
+        inline int aggregatedCount(const NodeIdx node) const {
             return _aggregatedCount[node];
         }
         // O(1)
-        inline ValueType value(NodeIdx node) const {
+        inline ValueType value(const NodeIdx node) const {
             return _values[node];
         }
 
@@ -160,19 +160,19 @@ class AvlTree {
         }
 
         // O(log(n)) 
-        bool add(ValueType value, Count cnt);
+        bool add(const ValueType value, const Count cnt);
 
         // O(log(n))
-        NodeIdx find(ValueType value) const;
+        NodeIdx find(const ValueType value) const;
         
         // O(log(n))
-        NodeIdx floor(ValueType value) const;
+        NodeIdx floor(const ValueType value) const;
 
         // O(log(n))
-        NodeIdx floorSum(Count sum) const;
+        NodeIdx floorSum(const Count sum) const;
 
         // O(log(n))
-        Count ceilSum(NodeIdx node) const;
+        Count ceilSum(const NodeIdx node) const;
 
     private:
         // O(1)
@@ -181,18 +181,19 @@ class AvlTree {
         }
 
         // (O(log(n)^2)
-        void rebalance(NodeIdx node);
+        void rebalance(const NodeIdx node);
 
         // O(log(n))
-        void rotateLeft(NodeIdx node);
+        void rotateLeft(const NodeIdx node);
 
         // O(log(n))
         // TODO to factor with rotateLeft
-        void rotateRight(NodeIdx node);
+        void rotateRight(const NodeIdx node);
 
 		int ExpandNodes();
 
-		int CopyNode(NodeIdx node, ValueType val, Count cnt, NodeIdx parent);
+		int CopyNode(const NodeIdx node, const ValueType val, 
+			const Count cnt, const NodeIdx parent);
 
     public:
         // 
@@ -200,22 +201,22 @@ class AvlTree {
         //
 
         // Check balance integrity
-        bool checkBalance(NodeIdx node) const;
+        bool checkBalance(const NodeIdx node) const;
 
         bool checkBalance() const;
 
         // Check aggregates integrity
-        bool checkAggregates(NodeIdx node) const;
+        bool checkAggregates(const NodeIdx node) const;
 
         bool checkAggregates() const;
 
         // Check integrity (order of nodes)
-        bool checkIntegrity(NodeIdx node) const;
+        bool checkIntegrity(const NodeIdx node) const;
 
         bool checkIntegrity() const;
 
         // Print as rows
-        void print(NodeIdx node) const;
+        void print(const NodeIdx node) const;
 
         void print() const;
 
